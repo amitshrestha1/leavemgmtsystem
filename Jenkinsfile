@@ -25,7 +25,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build(DOCKER_IMAGE, '--build-arg user=amitshrestha --build-arg uid=1000 .')
+                    docker.build(DOCKER_IMAGE, '--build-arg user=jenkins --build-arg uid=1000 .')
                 }
             }
         }
