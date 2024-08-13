@@ -48,7 +48,7 @@ pipeline {
                 script {
                     docker.image(DOCKER_IMAGE).inside {
                         sh '''
-                        docker-compose up -d
+                        docker-compose up -d --build
                         # Add commands to test your application here
                         curl http://localhost:8005
                         docker-compose down
