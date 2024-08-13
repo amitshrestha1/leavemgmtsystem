@@ -13,11 +13,12 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout code from your Git repository
-                checkout([$class: 'GitSCM',
-                    branches: [[name: '*/dev']], // Replace 'main' with your branch name
-                    userRemoteConfigs: [[url: 'git@github.com:amitshrestha1/leavemgmtsystem.git']] // Replace with your repository URL
-                ])
+                sshagent(['amitshrestha']) {
+                    checkout([$class: 'GitSCM',
+                        branches: [[name: '*/dev']], // Replace 'dev' with your branch name
+                        userRemoteConfigs: [[url: 'git@github.com:amitshrestha1/leavemgmtsystem']] // Replace with your SSH URL
+                    ])
+                }
             }
         }
 
