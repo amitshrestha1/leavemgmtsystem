@@ -64,7 +64,6 @@ pipeline {
             }
         }
 
-        stages {
         stage('Deploy to Azure VM') {
             steps {
                 script {
@@ -109,7 +108,6 @@ pipeline {
                 }
             }
         }
-    }
     }
 
     post {
