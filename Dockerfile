@@ -1,8 +1,7 @@
 FROM php:8.3-fpm
 
 # Arguments defined in docker-compose.yml
-ARG user
-ARG uid
+WORKDIR /var/www/html
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -24,15 +23,16 @@ RUN docker-php-ext-install zip mysqli pdo_mysql mbstring exif pcntl bcmath gd &&
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Create system user to run Composer and Artisan Commands
-RUN useradd -G www-data,root -u $uid -d /home/$user $user
-RUN mkdir -p /home/$user/.composer && \
-    chown -R $user:$user /home/$user
+COPY . .
 
-# Set working directory
-WORKDIR /var/www
+RUN composer install --no-dev --no-scripts --optimize-autoloader
 
-COPY . /var/www
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-USER $user
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Expose the application port
+EXPOSE 9000
+CMD ["php-fpm"]
 
