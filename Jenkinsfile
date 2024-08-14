@@ -59,7 +59,7 @@ pipeline {
         // }
         stage('Zip Application'){
             steps{
-                sh 'zip -r laravel-app.zip leavemgmtsys -x "leavemgmtsys/vendor/*"'
+                sh 'zip -r laravel-app.zip . -x "vendor/*"'
                 archiveArtifacts artifacts: 'laravel-app.zip', allowEmptyArchive: false
             }
         }
