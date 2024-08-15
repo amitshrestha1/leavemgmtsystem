@@ -76,16 +76,22 @@ pipeline {
                         sshpass -p ${SSH_PASSWORD} ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${AZURE_VM_USER}@${AZURE_VM_IP} << EOF
                             # Install Docker
                             
-                            sudo mkdir -p /etc/apt/keyrings &&
-                            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo tee /etc/apt/keyrings/docker.asc &&
                             sudo apt-get update &&
-                            sudo apt-get install docker-ce docker-ce-cli containerd.io &&
+                            sudo apt-get install ca-certificates curl &&
+                            sudo install -m 0755 -d /etc/apt/keyrings &&
+                            sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc &&
+                            sudo chmod a+r /etc/apt/keyrings/docker.asc &&
 
                             
-                            # Install Docker Compose
-                            sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-\$(uname -s)-\$(uname -m)" -o /usr/local/bin/docker-compose &&
-                            sudo chmod +x /usr/local/bin/docker-compose &&
+                            echo \
+                            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+                            $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+                            sudo tee /etc/apt/sources.list.d/docker.list > /dev/null &&
+                            sudo apt-get update &&
                             
+                            sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin &&
+
+                            sudo apt install docker-compose &&
                             # Create a directory for deployment
                             mkdir -p /var/www/laravel-app &&
                             
