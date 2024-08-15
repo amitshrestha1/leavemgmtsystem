@@ -24,8 +24,15 @@ pipeline {
                         scp -o StrictHostKeyChecking=no -i ${SSH_KEY} ${ARTIFACT_FILE} ${AZURE_VM_USER}@${AZURE_VM_IP}:${DEPLOYMENT_PATH}
 
                         # SSH into the VM and perform installation and deployment tasks
-                        ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${AZURE_VM_USER}@${AZURE_VM_IP} <<EOF
+                        ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${AZURE_VM_USER}@${AZURE_VM_IP} <<'EOF'
                             sudo apt-get update &&
+                            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - &&
+    
+                            # Add Docker's APT repository if not already present
+                            if ! grep -q "^deb .*docker.com" /etc/apt/sources.list.d/docker.list; then
+                                echo "deb [arch=$(dpkg --print-architecture) https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+                            fi &&
+                            sud apt-get update &&
                             sudo apt-get install -y docker.io docker-compose &&
                             mkdir -p /var/www/laravel-app &&
                             unzip -o ${DEPLOYMENT_PATH}/${ARTIFACT_FILE} -d /var/www/laravel-app &&
@@ -34,7 +41,7 @@ pipeline {
                             sudo docker-compose exec -T app composer install --no-dev --no-interaction --optimize-autoloader &&
                             sudo docker-compose exec -T app php artisan migrate --seed &&
                             sudo docker-compose exec -T app php artisan optimize:clear
-                        EOF
+                        'EOF'
                         '''
                     }
                 }
