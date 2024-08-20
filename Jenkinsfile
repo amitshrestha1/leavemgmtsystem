@@ -32,7 +32,7 @@ pipeline {
                             if ! grep -q "^deb .*docker.com" /etc/apt/sources.list.d/docker.list; then
                                 echo "deb [arch=$(dpkg --print-architecture) https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
                             fi &&
-                            sud apt-get update &&
+                            sudo apt-get update &&
                             sudo apt-get install -y docker.io docker-compose &&
                             mkdir -p /var/www/laravel-app &&
                             unzip -o ${DEPLOYMENT_PATH}/${ARTIFACT_FILE} -d /var/www/laravel-app &&
