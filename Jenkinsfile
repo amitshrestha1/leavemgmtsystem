@@ -25,23 +25,34 @@ pipeline {
 
                         # SSH into the VM and perform installation and deployment tasks
                         ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${AZURE_VM_USER}@${AZURE_VM_IP} <<'EOF'
-                            sudo apt-get update &&
-                            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - &&
-    
-                            # Add Docker's APT repository if not already present
-                            if ! grep -q "^deb .*docker.com" /etc/apt/sources.list.d/docker.list; then
-                                echo "deb [arch=$(dpkg --print-architecture) https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-                            fi &&
-                            sudo apt-get update &&
-                            sudo apt-get install -y docker.io docker-compose &&
-                            mkdir -p /var/www/laravel-app &&
-                            unzip -o ${DEPLOYMENT_PATH}/${ARTIFACT_FILE} -d /var/www/laravel-app &&
-                            cd /var/www/laravel-app &&
-                            sudo docker-compose up -d --build &&
-                            sudo docker-compose exec -T app composer install --no-dev --no-interaction --optimize-autoloader &&
-                            sudo docker-compose exec -T app php artisan migrate --seed &&
-                            sudo docker-compose exec -T app php artisan optimize:clear
-                        'EOF'
+                        for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do 
+                            sudo apt-get remove -y $pkg; 
+                        done
+
+                        # Add Docker's official GPG key:
+                        sudo apt-get update
+                        sudo apt-get install -y ca-certificates curl
+                        sudo install -m 0755 -d /etc/apt/keyrings
+                        sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+                        sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+                        # Add the repository to Apt sources:
+                        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+                        $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+                        sudo apt-get update
+                        sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+                        
+                        # Deploy Laravel application
+                        mkdir -p /var/www/laravel-app
+                        unzip -o ${DEPLOYMENT_PATH}/${ARTIFACT_FILE} -d /var/www/laravel-app
+                        cd /var/www/laravel-app
+                        sudo docker-compose up -d --build
+                        sudo docker-compose exec -T app composer install --no-dev --no-interaction --optimize-autoloader
+                        sudo docker-compose exec -T app php artisan migrate --seed
+                        sudo docker-compose exec -T app php artisan optimize:clear
+                        EOF
+
                         '''
                     }
                 }
