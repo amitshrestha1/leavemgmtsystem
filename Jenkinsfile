@@ -45,7 +45,7 @@ pipeline {
                         sudo apt-get install unzip
                         # Deploy Laravel application
                         sudo mkdir -p /var/www/laravel-app
-                        sudo unzip -o ${DEPLOYMENT_PATH}/${ARTIFACT_FILE} -d /var/www/laravel-app
+                        sudo unzip -o /home/testadmin/laravel-app.zip -d /var/www/laravel-app
                         cd /var/www/laravel-app
                         sudo docker compose up -d --build
                         sudo docker compose exec -T app composer install --no-dev --no-interaction --optimize-autoloader
