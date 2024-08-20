@@ -42,10 +42,10 @@ pipeline {
 
                         sudo apt-get update
                         sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-                        
+                        sudo apt-get install unzip
                         # Deploy Laravel application
-                        mkdir -p /var/www/laravel-app
-                        unzip -o ${DEPLOYMENT_PATH}/${ARTIFACT_FILE} -d /var/www/laravel-app
+                        sudo mkdir -p /var/www/laravel-app
+                        sudo unzip -o ${DEPLOYMENT_PATH}/${ARTIFACT_FILE} -d /var/www/laravel-app
                         cd /var/www/laravel-app
                         sudo docker compose up -d --build
                         sudo docker compose exec -T app composer install --no-dev --no-interaction --optimize-autoloader
