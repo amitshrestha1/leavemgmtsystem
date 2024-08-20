@@ -47,10 +47,10 @@ pipeline {
                         mkdir -p /var/www/laravel-app
                         unzip -o ${DEPLOYMENT_PATH}/${ARTIFACT_FILE} -d /var/www/laravel-app
                         cd /var/www/laravel-app
-                        sudo docker-compose up -d --build
-                        sudo docker-compose exec -T app composer install --no-dev --no-interaction --optimize-autoloader
-                        sudo docker-compose exec -T app php artisan migrate --seed
-                        sudo docker-compose exec -T app php artisan optimize:clear
+                        sudo docker compose up -d --build
+                        sudo docker compose exec -T app composer install --no-dev --no-interaction --optimize-autoloader
+                        sudo docker compose exec -T app php artisan migrate --seed
+                        sudo docker compose exec -T app php artisan optimize:clear
                         EOF
 
                         '''
