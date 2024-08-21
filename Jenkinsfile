@@ -5,9 +5,8 @@ pipeline {
         DOCKER_IMAGE = 'amitshrestha1/leavemgmtsys:latest'
         DOCKERHUB_CREDENTIALS = 'dockerhub_id'
         AZURE_VM_SSH_CREDENTIALS = 'azure_vm'
-        AZURE_VM_IP = '20.255.153.123'
+        AZURE_VM_IP = '20.2.193.110'
         AZURE_VM_USER = 'testadmin'
-        SSH_PASSWORD = 'Admin@123'
         ARTIFACT_FILE = 'laravel-app.zip'
         DEPLOYMENT_PATH = '/home/testadmin'
     }
