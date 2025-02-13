@@ -23,7 +23,7 @@
 
     <!-- endinject -->
     <link rel="shortcut icon" href="{{ asset('lms/images/favicon.png') }}" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="{{ asset('lms/css/app.css') }}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link href="{{ asset('lms/css/select2/select2.css') }}" rel="stylesheet" />
 

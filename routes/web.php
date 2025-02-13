@@ -98,4 +98,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/logout', Logout::class)->name('logout');
     // Dashboard
     Route::get('/', Dashboard::class)->name('admin.dashboard');
+
+    Livewire::setScriptRoute(function ($handle) {
+        return Route::get('/vendor/livewire/livewire.js', $handle);
+    });
 });

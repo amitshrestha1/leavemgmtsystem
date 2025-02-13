@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # PHP with Apache2 service
+  php-apache:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: laravel-php-apache
+    volumes:
+      - .:/var/www
+    ports:
+      - "80:80"
+    networks:
+      - laravel-net
+
+  # MySQL service
+  mysql:
+    image: mysql:8.0
+    container_name: laravel-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: laravel
+    ports:
+      - "3306:3306"
+    networks:
+      - laravel-net
+
+  # Composer service for running composer commands
+  composer:
+    image: composer:latest
+    container_name: laravel-composer
+    volumes:
+      - .:/app
+    networks:
+      - laravel-net
+
+networks:
+  laravel-net:
+    driver: bridge
